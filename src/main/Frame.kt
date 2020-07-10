@@ -4,6 +4,7 @@ import java.awt.Rectangle
 import javax.swing.*
 
 class Frame(title: String): JFrame(title) {
+    val htmlRequest = HtmlRequest()
     private var actualWidth = 960
     private var actualHeight = 540
     private val stockList = ArrayList<StockLine>()
@@ -13,6 +14,10 @@ class Frame(title: String): JFrame(title) {
     lateinit var tickerJLabel: JLabel
     lateinit var buyPriceJLabel: JLabel
     lateinit var currencyJLabel: JLabel
+    lateinit var shareNoJLabel: JLabel
+    lateinit var currentPriceJLabel: JLabel
+    lateinit var gainsPerShareJLabel: JLabel
+    lateinit var totalGainsJLabel: JLabel
 
     init {
         setSize(960, 540)
@@ -28,7 +33,9 @@ class Frame(title: String): JFrame(title) {
         calculateJButton = JButton("Calculate data")
         calculateJButton.bounds = Rectangle(actualWidth / 2 - 100, actualHeight - 60, 200, 50)
         calculateJButton.addActionListener {
-            //TODO
+            for (stockLine in stockList) {
+                stockLine.requestData()
+            }
         }
         add(calculateJButton)
 
@@ -64,6 +71,22 @@ class Frame(title: String): JFrame(title) {
         currencyJLabel.bounds = Rectangle(buyPriceJLabel.x + buyPriceJLabel.width + 20, buyPriceJLabel.y, 100, buyPriceJLabel.height)
         add(currencyJLabel)
 
+        shareNoJLabel = JLabel("Shares", SwingConstants.CENTER)
+        shareNoJLabel.bounds = Rectangle(currencyJLabel.x + currencyJLabel.width + 20, buyPriceJLabel.y, 100, buyPriceJLabel.height)
+        add(shareNoJLabel)
+
+        currentPriceJLabel = JLabel("Current price", SwingConstants.CENTER)
+        currentPriceJLabel.bounds = Rectangle(shareNoJLabel.x + shareNoJLabel.width + 240, shareNoJLabel.y, 100, shareNoJLabel.height)
+        add(currentPriceJLabel)
+
+        gainsPerShareJLabel = JLabel("Gains per share", SwingConstants.CENTER)
+        gainsPerShareJLabel.bounds = Rectangle(currentPriceJLabel.x + currentPriceJLabel.width + 20, currentPriceJLabel.y, 100, currentPriceJLabel.height)
+        add(gainsPerShareJLabel)
+
+        totalGainsJLabel = JLabel("Total gains", SwingConstants.CENTER)
+        totalGainsJLabel.bounds = Rectangle(gainsPerShareJLabel.x + gainsPerShareJLabel.width + 20, gainsPerShareJLabel.y, 100, gainsPerShareJLabel.height)
+        add(totalGainsJLabel)
+
         invalidate()
         repaint()
     }
@@ -73,6 +96,7 @@ class Frame(title: String): JFrame(title) {
         stockList.add(newLine)
         newLine.addBoxes(stockList.size - 1)
         newLine.addButton()
+        newLine.addLabels()
 
         invalidate()
         repaint()
