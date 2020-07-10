@@ -129,4 +129,18 @@ class StockLine(private val frame: Frame, private val removable: Boolean) {
             gainsJLabel.text = "Invalid buy price"
         }
     }
+
+    /** Sets the various fields to the input data */
+    fun loadSaveData(market: String, ticker: String, buyPrice: String, currency: String, shares: String) {
+        marketJTextField.text = market
+        tickerJTextField.text = ticker
+        buyPriceJTextField.text = buyPrice
+        currencyJTextField.text = currency
+        shareNoJTextField.text = shares
+    }
+
+    /** Returns the single-line string representation of this stock line to be used in saves */
+    fun getSaveString(): String {
+        return marketJTextField.text.replace(",", "") + "," + tickerJTextField.text.replace(",", "") + "," + buyPriceJTextField.text.replace(",", "") + "," + currencyJTextField.text.replace(",", "") + "," + shareNoJTextField.text.replace(",", "")
+    }
 }

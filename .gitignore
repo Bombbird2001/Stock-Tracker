@@ -8,6 +8,7 @@ hs_err_pid*
 *.ipr
 *.iws
 *.iml
+save.stock
 com_crashlytics_export_strings.xml
 
 /out/

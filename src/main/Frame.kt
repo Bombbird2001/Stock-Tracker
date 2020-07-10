@@ -1,6 +1,8 @@
 package main
 
 import java.awt.Rectangle
+import java.io.File
+import java.lang.StringBuilder
 import javax.swing.*
 
 class Frame(title: String): JFrame(title) {
@@ -9,6 +11,7 @@ class Frame(title: String): JFrame(title) {
     private var actualHeight = 540
     private val stockList = ArrayList<StockLine>()
     private lateinit var calculateJButton: JButton
+    private lateinit var saveJButton: JButton
     private lateinit var addLineJButton: JButton
     lateinit var marketJLabel: JLabel
     lateinit var tickerJLabel: JLabel
@@ -31,7 +34,7 @@ class Frame(title: String): JFrame(title) {
 
     fun loadButtons() {
         calculateJButton = JButton("Calculate data")
-        calculateJButton.bounds = Rectangle(actualWidth / 2 - 100, actualHeight - 60, 200, 50)
+        calculateJButton.bounds = Rectangle(actualWidth / 2 - 210, actualHeight - 60, 200, 50)
         calculateJButton.addActionListener {
             for (stockLine in stockList) {
                 stockLine.requestData()
@@ -39,8 +42,25 @@ class Frame(title: String): JFrame(title) {
         }
         add(calculateJButton)
 
+        saveJButton = JButton("Save stock data")
+        saveJButton.bounds = Rectangle(calculateJButton.x + calculateJButton.width + 20, calculateJButton.y, 200, 50)
+        saveJButton.addActionListener {
+            val stringBuilder = StringBuilder()
+            for (stockLine in stockList) {
+                if (stringBuilder.isNotEmpty()) stringBuilder.append("\n")
+                stringBuilder.append(stockLine.getSaveString())
+            }
+            val file = File("save.stock")
+            if (!file.exists() && !file.createNewFile()) {
+                JOptionPane.showMessageDialog(null, "Failed to save stock data")
+                return@addActionListener
+            }
+            file.writeText(stringBuilder.toString())
+        }
+        add(saveJButton)
+
         addLineJButton = JButton("+ Add new stock")
-        addLineJButton.bounds = Rectangle(50, 90, 200, 25)
+        addLineJButton.bounds = Rectangle(50, 50 + stockList.size * 40, 200, 25)
         addLineJButton.addActionListener {
             SwingUtilities.invokeLater {
                 //Must run in correct thread
@@ -89,6 +109,22 @@ class Frame(title: String): JFrame(title) {
 
         invalidate()
         repaint()
+    }
+
+    fun loadSave() {
+        val file = File("save.stock")
+        if (!file.exists()) {
+            //If no save file, start with one blank line
+            addLine(false)
+            return
+        }
+        var firstLineAdded = false
+        file.forEachLine {
+            addLine(firstLineAdded)
+            if (!firstLineAdded) firstLineAdded = true
+            val data = it.split(",")
+            stockList[stockList.size - 1].loadSaveData(data[0], data[1], data[2], data[3], data[4])
+        }
     }
 
     fun addLine(removable: Boolean) {
