@@ -88,7 +88,18 @@ class StockLine(private val frame: Frame, private val removable: Boolean) {
 
     /** Requests the stock data from online page */
     fun requestData() {
+        if (marketJTextField.text.isNullOrEmpty() || tickerJTextField.text.isNullOrEmpty()) {
+            setInvalidInput()
+            return
+        }
         frame.htmlRequest.getStockPage(this, marketJTextField.text, tickerJTextField.text)
+    }
+
+    /** Sets labels to indicate invalid market/ticker input */
+    private fun setInvalidInput() {
+        priceJLabel.text = "Invalid stock"
+        gainsJLabel.text = "-"
+        totalJLabel.text = "-"
     }
 
     /** Sets labels to indicate if request fails */

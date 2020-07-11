@@ -22,7 +22,11 @@ class HtmlRequest {
             val doc = Jsoup.parse(response.body?.string())
             response.close()
             val elements = doc.select("span[class=priceText__1853e8a5]")
-            if (elements.isEmpty()) return
+            if (elements.isEmpty()) {
+                stockLine.setFailedResponse()
+                println("Could not find price element")
+                return
+            }
             val priceElement = elements[0]
             SwingUtilities.invokeLater {
                 stockLine.updatePriceData(priceElement.text())
