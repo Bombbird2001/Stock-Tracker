@@ -127,7 +127,7 @@ class Frame(title: String): JFrame(title) {
         }
     }
 
-    fun addLine(removable: Boolean) {
+    private fun addLine(removable: Boolean) {
         val newLine = StockLine(this, removable)
         stockList.add(newLine)
         newLine.addBoxes(stockList.size - 1)
